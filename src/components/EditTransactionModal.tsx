@@ -4,57 +4,73 @@ import DatePicker from 'react-datepicker';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { addTransaction, type Transaction } from '../redux/transactionSlice';
+import { editTransaction, type Transaction } from '../redux/transactionSlice';
 import type { AppDispatch } from '../redux/store';
 import type { RootState } from '../redux/store'
 
 import "react-datepicker/dist/react-datepicker.css";
 import { useState, useEffect } from 'react';
 
+type ModalProps = {
+    id: number;
+    onClose: () => void;
+}
+
 type FormData = {
     title: string;
     amount: number;
     category: string;
-    date: Date
+    type: string;
+    date: Date;
 };
 
-function AddTransaction() {
+function EditTransactionModal({ id, onClose }: ModalProps) {
     const dispatch = useDispatch<AppDispatch>();
-    const transactions = useSelector((state: RootState) => state.transaction.transactions);
+    const transaction = useSelector((state: RootState) =>
+        state.transaction.transactions.find((t) => t.id === id));
 
     const [isOpen, setIsOpen] = useState(false)
 
     // true = income, false = expense
-    const [transactionType, setTransactionType] = useState(true)
+    const [transactionType, setTransactionType] = useState(
+        transaction?.type === "income"
+    );
 
     const {
         register,
         handleSubmit,
-        reset,
         control,
         formState: { errors },
     } = useForm<FormData>({
         defaultValues: {
-            title: "",
-            category: "",
-            date: new Date(),
+            title: transaction?.title,
+            category: transaction?.category,
+            amount: transaction?.amount,
+            type: transaction?.type,
+            date: transaction?.date ? new Date(transaction?.date) : new Date(),
         },
     });
 
     const onSubmit = (data: FormData) => {
+        if (!transaction) return; 
+
         const transactionData: Transaction = {
             ...data,
-            id: Date.now(),
+            id: transaction.id,
             date: data.date.toISOString(),
-            type: transactionType ? "income" : "expense"
-        }
-        dispatch(addTransaction(transactionData))
-        reset();
+            type: transactionType ? "income" : "expense",
+        };
+
+        dispatch(editTransaction(transactionData));
+        onClose?.();
     };
 
+
     useEffect(() => {
-    console.log("Updated transactions:", transactions);
-    }, [transactions]);
+        if (transaction) {
+            setTransactionType(transaction.type === "income");
+        }
+    }, [transaction]);
 
 
     return (
@@ -64,7 +80,7 @@ function AddTransaction() {
                 flex flex-col w-3/4 h-full
                 py-2 px-4
             ">
-            <h1 className="text-2xl text-neutral-900 font-bold">Add Transaction</h1>
+            <h1 className="text-2xl text-neutral-900 font-bold">Edit Transaction</h1>
             <label htmlFor="title" className="mt-3 text-xl text-neutral-600 font-medium">Title</label>
             <input
                 id="title"
@@ -91,9 +107,9 @@ function AddTransaction() {
 
             <label htmlFor="amount" className="mt-4 text-xl text-neutral-600 font-medium">Amount</label>
             <div className="relative">
-                <p 
-                onClick={() => setTransactionType((prev) => !prev)}
-                className={`
+                <p
+                    onClick={() => setTransactionType((prev) => !prev)}
+                    className={`
                     absolute top-1/2 -translate-y-1/2 ml-2
                     w-6 rounded-lg text-center
                     text-white font-bold
@@ -156,7 +172,7 @@ function AddTransaction() {
             <Controller
                 name="date"
                 control={control}
-                rules={{ required: "Date is required"}}
+                rules={{ required: "Date is required" }}
                 render={({ field }) => (
                     <DatePicker
                         id="date"
@@ -173,7 +189,7 @@ function AddTransaction() {
 
             <input
                 type="submit"
-                value="Add transactions"
+                value="Edit transaction"
                 className="
                     mt-4 w-full py-2 rounded-md cursor-pointer bg-blue-600 text-white font-semibold 
                 " />
@@ -181,4 +197,4 @@ function AddTransaction() {
     )
 }
 
-export default AddTransaction
+export default EditTransactionModal
