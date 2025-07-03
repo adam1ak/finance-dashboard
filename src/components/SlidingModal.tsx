@@ -1,43 +1,52 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { AnimatePresence } from "framer-motion"
-import AddTransaction from "./AddTransaction"
 import SlideRightAnimation from "../motion/SlideRightAnimation"
+import type { ReactNode } from "react";
 
-function SlidingModal() {
 
-    const [isOpen, setIsOpen] = useState(false)
+function SlidingModal({
+    children,
+    isOpen,
+    closeModal,
+    onClose,
+}: {
+    children: ReactNode;
+    isOpen: boolean;
+    closeModal: (open: boolean) => void;
+    onClose?: () => void;
+}) {
+
 
     useEffect(() => {
 
         const handleKeyEsc = (e: KeyboardEvent) => {
-            if(e.key === "Escape") {
-                setIsOpen(false)
+            if (e.key === "Escape") {
+                closeModal(false)
             }
         };
 
-        if(isOpen){
+        if (isOpen) {
             window.addEventListener("keydown", handleKeyEsc)
         }
 
         return () => window.removeEventListener("keydown", handleKeyEsc)
-    },[isOpen])
+    }, [isOpen])
+
+    const handleClose = () => {
+        closeModal(false)
+        onClose?.()
+    }
+
 
     return (
         <>
-            <button
-                onClick={() => setIsOpen(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md"
-            >
-                Open Modal
-            </button>
             <AnimatePresence>
                 {isOpen && (
                     <div className="fixed z-50 h-screen">
                         <div
                             className="fixed left-0 top-0 z-10 w-full h-full"
-                            onClick={() => setIsOpen(false)}>xd</div>
-                        
-                        <SlideRightAnimation children={<AddTransaction/>} /> 
+                            onClick={() => handleClose} />
+                        <SlideRightAnimation children={children} />
                     </div>
                 )}
             </AnimatePresence>

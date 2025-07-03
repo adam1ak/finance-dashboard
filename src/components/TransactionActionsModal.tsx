@@ -5,41 +5,53 @@ import { useDispatch } from 'react-redux';
 import { removeTransaction } from '../redux/transactionSlice';
 import type { AppDispatch } from '../redux/store';
 import EditTransactionModal from "./EditTransactionModal";
+import { useState } from "react";
+import SlidingModal from "./SlidingModal";
 
 type ModalProps = {
     id: number,
     onClose: () => void
 }
 
-function TransactionActionsModal({onClose, id } : ModalProps) {
+function TransactionActionsModal({ onClose, id }: ModalProps) {
 
-const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
 
-  return (
-    <div
-    
-        className={`
-            absolute
-            pop-up-modal
-            w-max 
-            bg-white
-            flex flex-col gap-2  
-            pl-3 pr-8 py-2
-            shadow-lg rounded-sm
+    const [showEditModal, setShowEditModal] = useState(false)
 
+    const toggleEdit = () => {
+        setShowEditModal((prev) => !prev)
+    }
+
+    return (
+        <div
+            className={`
+                absolute
+                pop-up-modal
+                w-max 
+                bg-white
+                flex flex-col gap-2  
+                pl-3 pr-8 py-2
+                shadow-lg rounded-sm
         `}>
-            <span 
-            className="flex items-center cursor-pointer" 
-            onClick={() => {console.log("clicked edit")}}>
+            <SlidingModal
+                isOpen={showEditModal}
+                closeModal={toggleEdit}
+                onClose={onClose}>
+                    <EditTransactionModal id={id} onClose={onClose}/>
+            </SlidingModal>
+            <span
+                className="flex items-center cursor-pointer"
+                onClick={() => setShowEditModal(true)}>
                 <PencilSquareIcon
                     className="
                         size-5 mr-1
                     "/>
                 Edit
             </span>
-            <span 
-            className="flex items-center cursor-pointer" 
-            onClick={() => {
+            <span
+                className="flex items-center cursor-pointer"
+                onClick={() => {
                     dispatch(removeTransaction(id));
                     onClose()
                 }}>
@@ -49,9 +61,8 @@ const dispatch = useDispatch<AppDispatch>();
                     "/>
                 Delete
             </span>
-            <EditTransactionModal id={id} onClose={onClose}/>
-    </div>
-  )
+        </div>
+    )
 }
 
 export default TransactionActionsModal
