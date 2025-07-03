@@ -61,11 +61,11 @@ function AddTransaction() {
         <form
             onSubmit={handleSubmit(onSubmit)}
             className="
-                flex flex-col w-3/4 h-full
+                flex flex-col h-full
                 py-2 px-4
             ">
-            <h1 className="text-2xl text-neutral-900 font-bold">Add Transaction</h1>
-            <label htmlFor="title" className="mt-3 text-xl text-neutral-600 font-medium">Title</label>
+            <h1 className="text-3xl text-neutral-900 font-bold">Add Transaction</h1>
+            <label htmlFor="title" className="mt-6 text-2xl text-neutral-600 font-medium">Title</label>
             <input
                 id="title"
                 type="text"
@@ -85,11 +85,11 @@ function AddTransaction() {
                         }
                     })}
                 className="
-                    w-full border-2 border-stone-200 rounded-sm py-1.5 pl-2 focus:outline-none
+                    w-full text-xl border-2 border-stone-200 rounded-sm py-1.5 pl-2 focus:outline-none
                 "/>
             {errors.title && <p className="text-sm ml-2 text-red-700 font-medium">{errors.title.message}</p>}
 
-            <label htmlFor="amount" className="mt-4 text-xl text-neutral-600 font-medium">Amount</label>
+            <label htmlFor="amount" className="mt-6 text-2xl text-neutral-600 font-medium">Amount</label>
             <div className="relative">
                 <p 
                 onClick={() => setTransactionType((prev) => !prev)}
@@ -119,13 +119,13 @@ function AddTransaction() {
                             }
                         })}
                     className="
-                    w-full border-2 border-stone-200 rounded-sm py-1.5 pl-10 focus:outline-none
+                    w-full text-xl border-2 border-stone-200 rounded-sm py-1.5 pl-10 focus:outline-none
                 " />
             </div>
 
             {errors.amount && <p className="text-sm ml-2 text-red-700 font-medium">{errors.amount.message}</p>}
 
-            <label htmlFor="category" className="mt-4 text-xl text-neutral-600 font-medium">Category</label>
+            <label htmlFor="category" className="mt-6 text-2xl text-neutral-600 font-medium">Category</label>
             <div className="relative">
                 <select
                     id="category"
@@ -133,7 +133,7 @@ function AddTransaction() {
                     onClick={() => setIsOpen((prev) => !prev)}
                     onBlur={() => setIsOpen((prev) => !prev)}
                     className="
-                        w-full border-2 border-stone-200 rounded-sm py-1.5 pl-2 appearance-none focus:outline-none
+                        w-full text-xl border-2 border-stone-200 rounded-sm py-1.5 pl-2 appearance-none focus:outline-none
                     ">
                     <option value="" disabled hidden>Select a category</option> {/* Placeholder */}
                     <option value="Food">Food</option>
@@ -152,7 +152,7 @@ function AddTransaction() {
             </div>
             {errors.category && <p className="text-sm ml-2 text-red-700 font-medium">{errors.category.message}</p>}
 
-            <label htmlFor="date" className="mt-4 text-xl text-neutral-600 font-medium">Date</label>
+            <label htmlFor="date" className="mt-6 text-2xl text-neutral-600 font-medium">Date</label>
             <Controller
                 name="date"
                 control={control}
@@ -165,7 +165,7 @@ function AddTransaction() {
                         onBlur={field.onBlur}
                         dateFormat="dd/MM/yyyy"
                         className="
-                    w-full border-2 border-stone-200 rounded-sm py-1.5 pl-2 focus:outline-none
+                    w-full text-xl border-2 border-stone-200 rounded-sm py-1.5 pl-2 focus:outline-none
                 "  />
                 )}
             />
@@ -175,7 +175,7 @@ function AddTransaction() {
                 type="submit"
                 value="Add transactions"
                 className="
-                    mt-4 w-full py-2 rounded-md cursor-pointer bg-blue-600 text-white font-semibold 
+                    mt-6 text-xl w-full py-2 rounded-md cursor-pointer bg-blue-600 text-white font-semibold 
                 " />
         </form>
     )
