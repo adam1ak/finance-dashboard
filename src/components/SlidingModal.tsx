@@ -45,7 +45,7 @@ function SlidingModal({
                     <div className="fixed z-50 h-screen">
                         <div
                             className="fixed left-0 top-0 z-10 w-full h-full"
-                            onClick={() => handleClose} />
+                            onClick={() => handleClose()} />
                         <SlideRightAnimation children={children} />
                     </div>
                 )}
