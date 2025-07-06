@@ -5,6 +5,7 @@ import { useState } from 'react'
 import AddTransaction from './components/AddTransaction'
 import TransactionList from './components/TransactionsList'
 import SlidingModal from './components/SlidingModal'
+import Authentication from './components/Authentication'
 
 function App() {
 
@@ -15,8 +16,10 @@ function App() {
   }
 
   return (
-    <div>
-      <button onClick={toggleAddModal}>
+
+<div>
+    <Authentication/>
+      {/* <button onClick={toggleAddModal}>
         open
       </button>
       <SlidingModal
@@ -26,7 +29,7 @@ function App() {
       </SlidingModal>
       <p>xd</p>
       <TransactionList />
-      <p>x</p>
+      <p>x</p> */}
     </div>
   )
 }
