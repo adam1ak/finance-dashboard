@@ -1,4 +1,13 @@
-import { ExclamationTriangleIcon, ChartBarIcon } from '@heroicons/react/24/solid';
+import { ExclamationTriangleIcon, ChartBarIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
+
+import { Navigate } from 'react-router';
+
+import toast from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
+
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/firebaseConfig';
+
 import { useState } from 'react'
 import { useForm } from 'react-hook-form';
 
@@ -11,6 +20,7 @@ function Authentication() {
     }
 
     const [showRegistrationForm, setShowRegistrationForm] = useState(true);
+    const [showPassword, setShowPassword] = useState(false)
 
     const authMessages = {
         register: {
@@ -43,9 +53,34 @@ function Authentication() {
         }
     });
 
+    const handleRegister = (email: string, password: string) => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                toast.success("Registered");
+                reset();
+            })
+            .catch(() => {
+                toast.error("Error when registering")
+            });
+    }
+
+    const handleLogin = (email: string, password: string) => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                toast.success("Logged");
+                reset();
+            })
+            .catch(() => {
+                toast.error("Error when logging")
+            });
+    }
+
     const onSubmit = (data: FormData) => {
-        console.log(data)
-        reset()
+        if (showRegistrationForm) {
+            handleRegister(data.email, data.password)
+        } else {
+            handleLogin(data.email, data.password)
+        }
     }
 
     return (
@@ -55,6 +90,39 @@ function Authentication() {
                 items-center justify-center h-screen
                 px-8 lg:px-0
             ">
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+                gutter={8}
+                containerClassName=""
+                containerStyle={{}}
+                toastOptions={{
+                    className: '',
+                    duration: 5000,
+                    removeDelay: 1000,
+                    style: {
+                        background: '#fff',
+                        color: '#000',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                    },
+
+                    success: {
+                        duration: 3000,
+                        iconTheme: {
+                            primary: '#15803d',
+                            secondary: '#fff',
+                        },
+                    },
+
+                    error: {
+                        duration: 3000,
+                        iconTheme: {
+                            primary: '#b91c1c',
+                            secondary: '#fff',
+                        },
+                    },
+                }}
+            />
             <div className="lg:w-3/5 lg:flex lg:flex-col lg:items-center">
                 <div
                     className="flex flex-col items-center">
@@ -167,33 +235,50 @@ function Authentication() {
                             <label
                                 className="mb-2 text-black font-semibold"
                                 htmlFor="password">Password</label>
-                            <input
-                                className={`
-                                        outline-0 border-2 px-2 py-1 rounded-md
-                                        ${errors.password ?
-                                        "border-red-500 focus:border-red-500"
-                                        :
-                                        "border-gray-200 focus:border-gray-200"
-                                    }
-                                    `}
-                                id="password"
-                                type="password"
-                                placeholder="password1234"
-                                {...register("password",
-                                    {
-                                        required: "Password is required",
-                                        validate: (value) =>
-                                            value.trim().length > 0 || "Password cannot be empty or just spaces",
-                                        minLength: {
-                                            value: 8,
-                                            message: "Password must be at least 8 characters"
-                                        },
-                                        maxLength: {
-                                            value: 25,
-                                            message: "Password cannot exceed 25 characters"
+                            <div className='flex w-full relative'>
+                                <input
+                                    className={`
+                                            w-full
+                                            outline-0 border-2 px-2 py-1 rounded-md
+                                            ${errors.password ?
+                                            "border-red-500 focus:border-red-500"
+                                            :
+                                            "border-gray-200 focus:border-gray-200"
                                         }
-                                    }
-                                )} />
+                                        `}
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="password1234"
+                                    {...register("password",
+                                        {
+                                            required: "Password is required",
+                                            validate: (value) =>
+                                                value.trim().length > 0 || "Password cannot be empty or just spaces",
+                                            minLength: {
+                                                value: 8,
+                                                message: "Password must be at least 8 characters"
+                                            },
+                                            maxLength: {
+                                                value: 25,
+                                                message: "Password cannot exceed 25 characters"
+                                            }
+                                        }
+                                    )} />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    className="
+                                            absolute right-2 top-1/2 transform -translate-y-1/2
+                                            text-gray-600 hover:text-gray-700
+                                            cursor-pointer
+                                        ">
+                                    {showPassword ? (
+                                        <EyeSlashIcon className="size-5" />
+                                    ) : (
+                                        <EyeIcon className="size-5" />
+                                    )}
+                                </button>
+                            </div>
                             {errors.password && (
                                 <p className="text-sm text-red-600 mt-1.5 flex items-center">
                                     <ExclamationTriangleIcon className="size-4 mr-2" />

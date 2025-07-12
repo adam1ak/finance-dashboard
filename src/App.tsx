@@ -1,35 +1,73 @@
 import './App.css'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-import AddTransaction from './components/AddTransaction'
-import TransactionList from './components/TransactionsList'
-import SlidingModal from './components/SlidingModal'
+
+import { auth } from './firebase/firebaseConfig';
+
 import Authentication from './components/Authentication'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import Dashboard from './components/Dashboard'
+import ErrorPage from './components/ErrorPage';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const [showAddModal, setIsShowModal] = useState(false)
 
-  const toggleAddModal = () => {
-    setIsShowModal((prev) => !prev)
-  }
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setIsAuthenticated(true)
+      } else {
+        setIsAuthenticated(false)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   return (
 
-<div>
-    <Authentication/>
-      {/* <button onClick={toggleAddModal}>
-        open
-      </button>
-      <SlidingModal
-        isOpen={showAddModal}
-        closeModal={toggleAddModal}>
-          <AddTransaction/>
-      </SlidingModal>
-      <p>xd</p>
-      <TransactionList />
-      <p>x</p> */}
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/authentication" replace />
+              )
+            }
+          />
+
+          <Route
+            path="/authentication"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Authentication />
+              )
+            }
+          />
+
+          <Route
+            path="/dashboard"
+            element={
+              isAuthenticated ? (
+                <Dashboard />
+              ) : (
+                <Navigate to="/authentication" replace />
+              )
+            }
+          />
+
+          <Route path="*" element={<ErrorPage />}/>
+
+        </Routes>
+      </BrowserRouter>
     </div>
   )
 }
