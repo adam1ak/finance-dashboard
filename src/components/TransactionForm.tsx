@@ -49,7 +49,7 @@ function TransactionForm({ type, initialData, transactionType, onSubmit, setTran
                 date: initialData.date ? new Date(initialData.date) : new Date()
             })
         }
-    }, [JSON.stringify(initialData)])
+    }, [initialData, reset, setTransactionType])
 
     const handleFormSubmit = (data: FormData) => {
         onSubmit(data, () => {
@@ -115,7 +115,10 @@ function TransactionForm({ type, initialData, transactionType, onSubmit, setTran
                     {...register("amount",
                         {
                             required: "Amount is required",
-                            validate: (value) => value !== 0 || "Amount cannot be zero",
+                        validate: {
+                            positive: (value) => value > 0 || "Amount must be a positive number",
+                            noLeadingZero: (value) => !/^0\d+/.test(String(value)) || "Amount cannot start with 0"
+                        },
                             min: {
                                 value: -1000000,
                                 message: "Amount must be ≥ -1,000,000"

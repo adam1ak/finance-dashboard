@@ -10,6 +10,8 @@ export type Transaction = {
     type: "income" | "expense";
 }
 
+
+
 type TransactionState = {
     transactions: Transaction[];
 }
