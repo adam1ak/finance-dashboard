@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { Toaster } from 'react-hot-toast';
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 import { auth } from '../firebase/firebaseConfig';
 
 import { useState } from 'react'
@@ -19,6 +20,7 @@ function Authentication() {
 
     const [showRegistrationForm, setShowRegistrationForm] = useState(true);
     const [showPassword, setShowPassword] = useState(false)
+    const db = getFirestore()
 
     const authMessages = {
         register: {
@@ -51,15 +53,32 @@ function Authentication() {
         }
     });
 
-    const handleRegister = (email: string, password: string) => {
+    const addUserData = async (name: string, email: string) => {
+        const uid = auth.currentUser?.uid;
+        if (!uid) {
+            throw new Error("User UID is undefined");
+        }
+        try {
+            await setDoc(doc(db, "users", uid), {
+                name: name,
+                email: email
+            })
+        } catch {
+            toast.error("Error saving user data");
+        }
+    }
+
+    const handleRegister = (name: string, email: string, password: string) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
                 toast.success("Registered");
+                addUserData(name, email)
                 reset();
             })
             .catch(() => {
                 toast.error("Error when registering")
             });
+
     }
 
     const handleLogin = (email: string, password: string) => {
@@ -75,7 +94,7 @@ function Authentication() {
 
     const onSubmit = (data: FormData) => {
         if (showRegistrationForm) {
-            handleRegister(data.email, data.password)
+            handleRegister(data.name, data.email, data.password)
         } else {
             handleLogin(data.email, data.password)
         }

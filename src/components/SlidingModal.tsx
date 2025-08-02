@@ -42,6 +42,9 @@ function SlidingModal({
         <>
             <AnimatePresence>
                 {isOpen && (
+                    // <div className="fixed top-0 right-0 bg-yellow-500">
+                    //     xdd
+                    // </div>
                     <div className="fixed z-50 h-screen">
                         <div
                             className="fixed left-0 top-0 z-10 w-full h-full"

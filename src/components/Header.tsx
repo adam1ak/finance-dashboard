@@ -1,6 +1,10 @@
 import NavBar from "./NavBar";
 
-function Header() {
+interface HeaderProps {
+  userName: string;
+}
+
+function Header({ userName }: HeaderProps) {
 
   return (
     <div
@@ -9,9 +13,9 @@ function Header() {
         py-6 px-4
         h-1/3
       ">
-        <NavBar/>
-        <h1 className="mt-10 text-white text-3xl">Welcome Back, name</h1>
-        <h3 className="mt-1 text-white/50">This is your Financal Overview Raport</h3>
+      <NavBar />
+      <h1 className="mt-10 text-white text-3xl">Welcome Back, {userName}🖐️</h1>
+      <h3 className="mt-1 text-white/50">This is your Financal Overview Raport</h3>
     </div>
   )
 }

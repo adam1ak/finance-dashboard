@@ -21,7 +21,8 @@ function AddTransaction() {
     const onSubmit = (data: FormData, resetForm: () => void) => {
         const transactionData: Transaction = {
             ...data,
-            id: Date.now(),
+            amount: transactionType ? data.amount : -data.amount,
+            id: Date.now().toString(),
             date: data.date.toISOString(),
             type: transactionType ? "income" : "expense"
         }
